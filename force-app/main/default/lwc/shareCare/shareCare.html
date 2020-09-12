@@ -1,0 +1,19 @@
+<template>
+
+    <lightning-card>
+        hello this is going to be awesome one day.
+        The users we will be sharing records with are under the profile {profile}, we will be sharing records from the {sobject} table.
+
+        <div style="height: 250px;">
+                    
+            <lightning-datatable 
+                columns={userColumns} 
+                data={users} 
+                key-field="id">
+            </lightning-datatable>
+
+        </div>
+
+    </lightning-card>
+
+</template>
