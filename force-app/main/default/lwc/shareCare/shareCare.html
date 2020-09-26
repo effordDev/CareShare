@@ -4,13 +4,35 @@
         hello this is going to be awesome one day.
         The users we will be sharing records with are under the profile {profile}, we will be sharing records from the {sobject} table.
 
-        <div style="height: 250px;">
-                    
-            <lightning-datatable 
-                columns={userColumns} 
-                data={users} 
-                key-field="id">
-            </lightning-datatable>
+        <div class="slds-box grey-box" style="height: 400px">
+
+            <lightning-icon icon-name="standard:groups" alternative-text="Groups" size="medium" title="large size"></lightning-icon>
+
+            <div class="slds-text-heading_medium">Groups</div>
+
+            <div class="flex">
+
+                <div style="height: 250px; width: 50%; margin:1rem">
+
+                    <lightning-datatable 
+                        columns={groupColumns} 
+                        data={groups} 
+                        key-field="id">
+                    </lightning-datatable>
+
+                </div>
+
+                <div style="height: 250px; width: 50%; margin:1rem">
+                        
+                    <lightning-datatable 
+                        columns={userColumns} 
+                        data={groupedUsers} 
+                        key-field="id">
+                    </lightning-datatable>
+    
+                </div>
+
+            </div>
 
         </div>
 

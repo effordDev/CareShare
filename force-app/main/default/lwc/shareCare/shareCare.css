@@ -1,0 +1,16 @@
+.flex {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.grey-box {
+    background-color: #dedede;
+}
+
+.green-box {
+    background-color: #90b17f;
+}
+
+.iconWidth {
+    width: 30px;
+}
