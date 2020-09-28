@@ -3,7 +3,10 @@ import getUsers from '@salesforce/apex/ShareCareHelper.getUsers';
 import getGroupedUsers from '@salesforce/apex/contractorSharingHelper.getGroupedUsers'
 import getGroups from '@salesforce/apex/ShareCareHelper.getGroups';
 
-import { userTable, groupTable } from './tableData'
+import { 
+    userTable, 
+    groupTable 
+} from './tableData'
 
 export default class ShareCare extends LightningElement {
 
@@ -43,7 +46,7 @@ export default class ShareCare extends LightningElement {
         } 
 
         if (this._selectedGroups.length) {
-            //fetch the users
+            this.fetchGroupedUsers()
         }
     }
 }
