@@ -3,6 +3,12 @@
     flex-wrap: nowrap;
 }
 
+.split {
+    height: 250px; 
+    width: 50%; 
+    margin: 1rem;
+}
+
 .grey-box {
     background-color: #dedede;
 }

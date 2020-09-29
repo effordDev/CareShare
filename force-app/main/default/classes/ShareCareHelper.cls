@@ -48,4 +48,32 @@ public without sharing class ShareCareHelper {
             ORDER BY Name
         ];
     }
+
+    @AuraEnabled
+    public static Group createGroup(String name, List<Id> uids){
+        
+        Group newGroup = new Group();
+            newGroup.Name = name;
+        insert newGroup;
+
+        List<User> users = [
+            SELECT Id, Name
+            FROM User
+            WHERE Id IN : uids
+        ];
+
+        List<GroupMember> listGroupMember = new List<GroupMember>(); 
+
+        for (User u : users) {
+            
+            GroupMember gm = new GroupMember();
+                gm.GroupId          = newGroup.Id;
+                gm.UserOrGroupId    = u.Id;
+            listGroupMember.add(gm);
+        }
+
+        insert listGroupMember;
+
+        return newGroup;
+    }
 }
