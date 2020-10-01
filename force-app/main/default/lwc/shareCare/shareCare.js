@@ -1,10 +1,14 @@
 import { LightningElement, api, track } from 'lwc';
 
-import getUsers from '@salesforce/apex/ShareCareHelper.getUsers';
-import getGroupedUsers from '@salesforce/apex/ShareCareHelper.getGroupedUsers'
-
-import createGroup from '@salesforce/apex/ShareCareHelper.createGroup';
-import getGroups from '@salesforce/apex/ShareCareHelper.getGroups';
+import { 
+    ShowToastEvent,
+    //user functions
+    getUsers,
+    getGroupedUsers,
+    //group functions
+    createGroup,
+    getGroups
+} from './utils'
 
 import { 
     userTable, 
@@ -33,12 +37,15 @@ export default class ShareCare extends LightningElement {
     @track showCreateGroup = false
 
     @track isLoading = false
+    
     // -START-
-
     async connectedCallback() {
+        this.loading()
 
         this.users = await getUsers({ p:this.profile })
         this.groups = await getGroups()
+
+        this.loading()
     }
 
     // user table functions
@@ -55,10 +62,12 @@ export default class ShareCare extends LightningElement {
 
     //user table functions
     async fetchGroupedUsers() {
+        this.loading()
 
         const result = await getGroupedUsers({ groupIds: this._selectedGroups })
 
         this.groupedUsers = [...result]
+        this.loading()
     }
 
     //group table functions
@@ -80,6 +89,7 @@ export default class ShareCare extends LightningElement {
 
     //buttons
     async onCreateGroup(event) {
+        this.loading()
 
         if (!this._selectedUsers.length) {
             this.errorToast('Please Select a user to add to the group.')
@@ -91,15 +101,14 @@ export default class ShareCare extends LightningElement {
             return
         }
 
-        this.contractorGroupName = `GMS Contractors - ${this.contractorGroupName}`
-
         const result = await createGroup({name: this.contractorGroupName, uids: this._selectedUsers})
 
         this.groups = [...this.groups, result]
 
-        this.tastyToast(`${this.contractorGroupName} created.`)
+        this.tastyToast(`${result.Name} created.`)
         this.selectedRows = []
         this.contractorGroupName = ''
+        this.loading()
     }
 
     createGroupModal() {
@@ -113,7 +122,6 @@ export default class ShareCare extends LightningElement {
     // utils
     onSetContratorName(event) {
         this.contractorGroupName = event.target.value
-        console.log(this.contractorGroupName)
     }
 
     loading() {

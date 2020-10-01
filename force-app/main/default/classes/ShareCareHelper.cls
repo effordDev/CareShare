@@ -52,6 +52,8 @@ public without sharing class ShareCareHelper {
     @AuraEnabled
     public static Group createGroup(String name, List<Id> uids){
         
+        name = name + ' (Share)';
+
         Group newGroup = new Group();
             newGroup.Name = name;
         insert newGroup;
@@ -75,5 +77,25 @@ public without sharing class ShareCareHelper {
         insert listGroupMember;
 
         return newGroup;
+    }
+
+    @AuraEnabled
+    public static List<String> deleteGroups(List<Id> groupIds) {
+        
+        List<Group> groupsToDelete = [
+            SELECT Id, Name
+            FROM Group
+            WHERE Id IN : groupIds
+        ];
+
+        List<String> deletedGroups = new List<String>();
+        
+        for (Group g : groupsToDelete) {
+            deletedGroups.add(g.Name);
+        }
+
+        delete groupsToDelete;
+
+        return deletedGroups;
     }
 }
