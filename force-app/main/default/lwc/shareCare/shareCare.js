@@ -5,8 +5,11 @@ import {
     //user functions
     getUsers,
     getGroupedUsers,
+    addMember,
+    deleteMembers,
     //group functions
-    createGroup,
+    createGroups,
+    deleteGroups,
     getGroups
 } from './utils'
 
@@ -35,6 +38,7 @@ export default class ShareCare extends LightningElement {
     @track contractorGroupName = ''
 
     @track showCreateGroup = false
+    @track showAddUser = false
 
     @track isLoading = false
     
@@ -101,7 +105,7 @@ export default class ShareCare extends LightningElement {
             return
         }
 
-        const result = await createGroup({name: this.contractorGroupName, uids: this._selectedUsers})
+        const result = await createGroups({name: this.contractorGroupName, uids: this._selectedUsers})
 
         this.groups = [...this.groups, result]
 
@@ -115,8 +119,78 @@ export default class ShareCare extends LightningElement {
         this.showCreateGroup = this.showCreateGroup ? false : true 
     }
 
-    onDeleteGroups() {
-        console.log('hey we will delete groups here');
+    async onDeleteGroups() {
+        this.loading()
+
+        if (!this._selectedGroups.length) {
+            this.errorToast('Please Select a group.')
+            this.loading()
+            return
+        }
+
+        const deletedGroupsResult = await deleteGroups({ groupIds : this._selectedGroups })
+
+        this.groups = [...(await getGroups())]
+
+        this.tastyToast(`${this._selectedGroups.length} Groups Deleted`)
+
+        this.loading()
+    }
+
+    
+    async onAddUser() {
+
+        this.loading();
+
+        if(!this._selectedUsers.length) {
+            this.errorToast('Please Select a User')
+            return
+        }
+
+        await addMember({ groupIds:this._selectedGroups, uids:this._selectedUsers })
+
+        await this.fetchGroupedUsers()
+
+        this.selectedRows = []
+
+        this.loading()
+
+        this.tastyToast('Success')
+    }
+
+    async onRemoveUser() {
+        this.loading()
+
+        if (!this._selectedGroups.length) {
+            this.errorToast('Please Select a Group')
+            return
+        }
+        if (!this._selectedUsers.length) {
+            this.errorToast('Please Select a User')
+            return
+        }
+
+        await deleteMembers({ groupIds: this._selectedGroups, uids: this._selectedUsers})
+
+        await this.fetchGroupedUsers()
+
+        this.loading()
+
+        this.tastyToast('Success')
+    }
+
+    onOpenAddUserModal() {
+
+        if (!this._selectedGroups.length) {
+            this.errorToast('Please Select a Group')
+            return
+        }
+
+        this.showAddUser = true
+    }
+
+    onCloseAddUserModal() {
+        this.showAddUser = false
     }
 
     // utils

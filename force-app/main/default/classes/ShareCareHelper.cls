@@ -80,7 +80,7 @@ public without sharing class ShareCareHelper {
     }
 
     @AuraEnabled
-    public static List<String> deleteGroups(List<Id> groupIds) {
+    public static List<Group> deleteGroups(List<Id> groupIds) {
         
         List<Group> groupsToDelete = [
             SELECT Id, Name
@@ -88,14 +88,62 @@ public without sharing class ShareCareHelper {
             WHERE Id IN : groupIds
         ];
 
-        List<String> deletedGroups = new List<String>();
+        // List<String> deletedGroups = new List<String>();
         
-        for (Group g : groupsToDelete) {
-            deletedGroups.add(g.Name);
-        }
+        // for (Group g : groupsToDelete) {
+        //     deletedGroups.add(g.Name);
+        // }
 
         delete groupsToDelete;
 
-        return deletedGroups;
+        return groupsToDelete;
+    }
+
+    @AuraEnabled
+    public static List <Group> addMember(List<Id> groupIds, List<Id> uids){
+
+        List <GroupMember> membersToInsert = new List <GroupMember>();
+
+        List <Group> groups = [
+            SELECT Id, Name
+            FROM Group
+            WHERE Id IN : groupIds
+        ];
+
+        List <User> users = [
+            SELECT Id, Name
+            FROM User
+            WHERE Id IN : uids
+        ];
+
+        for (Group g : groups) {
+
+            for (User u : users) {
+
+                GroupMember newMember = new GroupMember();
+                    newMember.GroupId       = g.Id;
+                    newMember.UserOrGroupId = u.Id;
+                membersToInsert.add(newMember);
+            }
+        } 
+
+        insert membersToInsert;
+        return groups;
+    }
+
+    @AuraEnabled
+    public static List<GroupMember> deleteMembers(List<Id> groupIds, List<Id> uids) {
+        
+        List<GroupMember> membersToDelete = [
+            SELECT GroupId, UserOrGroupId
+            FROM GroupMember
+            WHERE GroupId IN : groupIds
+                AND UserOrGroupId IN : uids
+        ];
+
+
+        delete membersToDelete;
+
+        return membersToDelete;
     }
 }

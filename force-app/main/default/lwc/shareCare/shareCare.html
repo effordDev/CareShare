@@ -11,6 +11,7 @@
         hello this is going to be awesome one day.
         The users we will be sharing records with are under the profile {profile}, we will be sharing records from the {sobject} table.
 
+        <!-- modals -->
         <template if:true={showCreateGroup}>
 
             <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
@@ -81,6 +82,71 @@
 
         </template>
 
+        <template if:true={showAddUser}>
+
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+
+                <div class="slds-modal__container">
+
+                <header class="slds-modal__header">
+
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={onCloseAddUserModal} title="Close">
+
+                    <span class="slds-assistive-text">Close</span>
+
+                    </button>
+
+                    <h2 class="slds-modal__title slds-hyphenate">Add User</h2>
+
+                </header>
+
+                <div class="slds-modal__content slds-p-around_medium">
+
+                    <br />
+
+                        <div class="slds-box grey-box">
+            
+                            <lightning-icon icon-name="standard:user" alternative-text="User" size="medium" title="large size"></lightning-icon>
+
+                            <div class="slds-text-heading_medium">Users</div>
+                    
+                            <div style="height: 250px;">
+                    
+                                <lightning-datatable 
+                                    columns={userColumns} 
+                                    data={users} 
+                                    key-field="id"
+                                    onrowselection={getSelectedUsers}
+                                    selected-rows={selectedRows}>
+                                </lightning-datatable>
+                        
+                            </div>
+                    
+                        </div>
+
+                        <div class="slds-m-top_medium slds-m-bottom_x-large">
+
+                            <lightning-button variant="brand-outline" label="Add User" onclick={onAddUser} class="slds-m-left_x-small"></lightning-button>
+
+                        </div>
+
+                </div>
+
+                <footer class="slds-modal__footer">
+
+                    <button class="slds-button slds-button_neutral" onclick={onCloseAddUserModal}>Close</button>
+
+                </footer>
+
+                </div>
+
+            </section>
+
+            <div class="slds-backdrop slds-backdrop_open"></div>
+
+        </template>
+        <!-- modals end -->
+
         <div class="slds-box grey-box" style="height: 400px; margin:1rem">
 
             <div class="flex">
@@ -119,9 +185,21 @@
                     <lightning-datatable 
                         columns={userColumns} 
                         data={groupedUsers} 
+                        onrowselection={getSelectedUsers}
                         key-field="id">
                     </lightning-datatable>
-    
+                    
+                    <br />
+
+                    <center>
+
+                        <lightning-button label="Remove User" variant="destructive" disabled={disableRemoveUserButton} onclick={onRemoveUser}></lightning-button>
+
+                        &nbsp;&nbsp;
+                        
+                        <lightning-button label="Add User" variant="brand" disabled={disableAddUserButton} onclick={onOpenAddUserModal}></lightning-button>
+
+                    </center>
                 </div>
 
             </div>
