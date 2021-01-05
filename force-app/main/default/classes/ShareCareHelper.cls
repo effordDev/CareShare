@@ -88,12 +88,6 @@ public without sharing class ShareCareHelper {
             WHERE Id IN : groupIds
         ];
 
-        // List<String> deletedGroups = new List<String>();
-        
-        // for (Group g : groupsToDelete) {
-        //     deletedGroups.add(g.Name);
-        // }
-
         delete groupsToDelete;
 
         return groupsToDelete;
@@ -145,5 +139,14 @@ public without sharing class ShareCareHelper {
         delete membersToDelete;
 
         return membersToDelete;
+    }
+
+    //sharing
+    @AuraEnabled
+    public static List<SObject> availableSObjects(String sob) {
+        
+        List<sObject> sobjList = Database.query('SELECT Id, Name FROM ' + sob);
+
+        return sobjList;
     }
 }
