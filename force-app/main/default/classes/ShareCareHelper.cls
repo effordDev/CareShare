@@ -7,7 +7,7 @@ public without sharing class ShareCareHelper {
         List <User> u = [
             SELECT Id, Name, Email,  Profile.Name
             FROM User
-            WHERE Profile.Name = : p
+            WHERE ProfileId =: p
             ORDER BY Name
         ];
 
@@ -145,8 +145,58 @@ public without sharing class ShareCareHelper {
     @AuraEnabled
     public static List<SObject> availableSObjects(String sob) {
         
-        List<sObject> sobjList = Database.query('SELECT Id, Name FROM ' + sob);
+        String q = 'SELECT Id, Name, CreatedDate FROM ' + sob + ' LIMIT 1000';
+
+        List<sObject> sobjList = Database.query(q);
 
         return sobjList;
+    }
+
+    @AuraEnabled
+    public static Boolean createShares(List<Id> recordIds, List<Id> groupIds, String sob) {
+
+        List<Group> groups = [
+            SELECT Id, Name
+            FROM Group
+            WHERE Id IN : groupIds
+        ];
+
+        String q = 'SELECT Id FROM ' + sob + ' WHERE Id IN: ' + recordIds;
+
+        List<sobject> records = Database.query(q);
+
+        String shareApi = sob.substring(0, sob.length() - 1) + 'Share';
+
+        List<sobject> shares = new List<sobject>();
+
+        try {
+
+            for (sobject o : records) {
+
+                for (Group g : groups) {
+    
+                    Schema.SObjectType shareType = Schema.getGlobalDescribe().get(shareApi);
+                    SObject share = shareType.newSObject();
+                        share.put('ParentId', o.Id);
+                        share.put('AccessLevel', 'Edit');
+                        share.put('UserorGroupId', g.Id);
+                        // share.AccessLevel   = 'Edit';
+                        // share.UserorGroupId = g.Id;
+                    shares.add(share);
+                }
+            }
+
+            if (!shares.isEmpty()) {
+                insert shares;
+                return true;
+            }
+
+            return true;
+
+        } catch (DmlException e) {
+
+            System.debug('The following exception has occurred: ' + e.getMessage());
+            return false;
+        }
     }
 }
