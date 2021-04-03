@@ -161,7 +161,7 @@ public without sharing class ShareCareHelper {
             WHERE Id IN : groupIds
         ];
 
-        String q = 'SELECT Id FROM ' + sob + ' WHERE Id IN: ' + recordIds;
+        String q = 'SELECT Id FROM ' + sob + ' WHERE Id IN: recordIds';
 
         List<sobject> records = Database.query(q);
 
@@ -185,7 +185,10 @@ public without sharing class ShareCareHelper {
                     shares.add(share);
                 }
             }
-
+            
+            system.debug(' here are the shares');
+			system.debug(shares);	
+            
             if (!shares.isEmpty()) {
                 insert shares;
                 return true;
@@ -195,6 +198,29 @@ public without sharing class ShareCareHelper {
 
         } catch (DmlException e) {
 
+            System.debug('The following exception has occurred: ' + e.getMessage());
+            return false;
+        }
+    }
+
+    //TODO: add to ui
+    //TODO: add current access and add to ui
+    @AuraEnabled
+    public static Boolean deleteShares(List<Id> groupIds, List<Id> recordIds) {
+
+        String q = 'SELECT ParentId, UserorGroupId FROM sObject WHERE ParentId IN: recordIds AND UserorGroupId IN: groupIds';
+        List<sObject> sharesToDelete = Database.query(q);
+            
+        try {
+
+            if (!sharesToDelete.isEmpty()){
+                delete sharesToDelete;
+                return true;
+            }
+
+            return true;
+
+        } catch (DmlException e) {
             System.debug('The following exception has occurred: ' + e.getMessage());
             return false;
         }

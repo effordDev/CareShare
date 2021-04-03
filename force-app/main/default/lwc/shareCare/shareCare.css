@@ -4,7 +4,7 @@
 }
 
 .split {
-    height: 250px; 
+    height: auto; 
     width: 50%; 
     margin: 1rem;
 }
