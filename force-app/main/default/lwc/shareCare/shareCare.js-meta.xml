@@ -9,11 +9,4 @@
         <target>lightning__AppPage</target>
     </targets>
 
-    <targetConfigs>
-        <targetConfig targets="lightning__AppPage">
-            <property label="Pick Profile" name="profile" type="String" required="true" datasource="apex://ProfilePicker"/>
-            <property label="Pick Object" name="sobject" type="String" required="true" datasource="apex://SObjectPicker"/>
-        </targetConfig>
-    </targetConfigs>
-
 </LightningComponentBundle>
