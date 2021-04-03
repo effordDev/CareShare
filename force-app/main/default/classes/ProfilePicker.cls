@@ -1,27 +1,14 @@
-global class ProfilePicker extends VisualEditor.DynamicPickList {
+global class ProfilePicker {
 
-    global override VisualEditor.DataRow getDefaultValue(){
-        VisualEditor.DataRow defaultValue = new VisualEditor.DataRow('None', 'None');
-        return defaultValue;
-    }
-
-    global override VisualEditor.DynamicPickListRows getValues() {
+    @AuraEnabled(cacheable = false)
+    public static List<Profile> getValues() {
 
         List<Profile> profiles = new List<Profile>();
 
-        profiles = [
+        return profiles = [
             SELECT Id, Name, Description
             FROM Profile
             ORDER BY Name
         ];
-
-        VisualEditor.DynamicPickListRows  myValues = new VisualEditor.DynamicPickListRows();
-
-        for (Profile p : profiles) {
-            VisualEditor.DataRow value = new VisualEditor.DataRow(p.Name, p.Name);
-            myValues.addRow(value);
-        }
-        
-        return myValues;
     }
 }

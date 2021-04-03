@@ -1,15 +1,9 @@
-global class SObjectPicker extends VisualEditor.DynamicPickList {
+global class SObjectPicker {
     
-    global override VisualEditor.DataRow getDefaultValue(){
-        VisualEditor.DataRow defaultValue = new VisualEditor.DataRow('None', 'None');
-        return defaultValue;
-    }
+    @AuraEnabled(cacheable = false)
+    public static List<sfObject> getValues() {
 
-    global override VisualEditor.DynamicPickListRows getValues() {
-
-        // Map<String, String> sObjects= new Map<String, String>();
-
-        VisualEditor.DynamicPickListRows  myValues = new VisualEditor.DynamicPickListRows();
+        List<sfObject> allObjects = new List<sfObject>();
 
         for(Schema.SObjectType objTyp : Schema.getGlobalDescribe().Values()){
 
@@ -21,14 +15,28 @@ global class SObjectPicker extends VisualEditor.DynamicPickList {
                 && !apiName.containsignorecase('tag') 
                 && !apiName.containsignorecase('share') 
                 && !apiName.containsignorecase('feed')) 
-                || apiName.contains('__c')) {    
+                && apiName.contains('__c')) {    
                      
-                VisualEditor.DataRow value = new VisualEditor.DataRow(labelName, apiName);
-                myValues.addRow(value);
+                    sfObject value = new sfObject(labelName, apiName);
+                    allObjects.add(value);
             }
         }
-        
-        return myValues;
+
+        return allObjects;
+    }
+
+    public class sfObject {
+        @AuraEnabled 
+        public String label {get;set;}
+        @AuraEnabled 
+        public String value{get;set;}
+
+        public sfObject() {}
+
+        public sfObject(String o_Label, String o_api) {
+            label = o_Label;
+            value = o_api;
+        }
     }
 
 }
